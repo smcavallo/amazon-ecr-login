@@ -6,6 +6,7 @@ const ECR_LOGIN_GITHUB_ACTION_USER_AGENT = 'amazon-ecr-login-for-github-actions'
 const ECR_PUBLIC_REGISTRY_URI = 'public.ecr.aws';
 
 const INPUTS = {
+  helmLogin: 'helm-login',
   skipLogout: 'skip-logout',
   registries: 'registries',
   registryType: 'registry-type'
@@ -129,6 +130,28 @@ async function run() {
       if (exitCode !== 0) {
         core.debug(doLoginStdout);
         throw new Error(`Could not login to registry ${registryUri}: ${doLoginStderr}`);
+      }
+
+      if (helmLogin) {
+        // Execute the helm login command
+        let doLoginStdout = '';
+        let doLoginStderr = '';
+        const exitCode = await exec.exec('helm', ['registry', 'login', proxyEndpoint, '-u', creds[0], '-p', creds[1]], {
+          silent: true,
+          ignoreReturnCode: true,
+          listeners: {
+            stdout: (data) => {
+              doLoginStdout += data.toString();
+            },
+            stderr: (data) => {
+              doLoginStderr += data.toString();
+            }
+          }
+        });
+        if (exitCode !== 0) {
+          core.debug(doLoginStdout);
+          throw new Error(`Could not use helm to login to registry ${registryUri}: ${doLoginStderr}`);
+        }
       }
 
       // Output docker username and password

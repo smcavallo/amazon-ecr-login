@@ -128,6 +128,11 @@ If using ECR Public:
 - Docker password output: `docker_password_public_ecr_aws`
 
 To push Helm charts, you can also login through Docker. By default, Helm can authenticate with the same credentials that you use for Docker.
+* Optionally, if helm is in the path, you can log into helm as well by enabling the following option
+```json
+  with:
+    helm-login: true
+```
 
 ## Permissions
 

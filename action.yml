@@ -24,6 +24,12 @@ inputs:
       Options: [private, public]
     required: false
     default: private
+  helm-login:
+    description: >-
+      Whether to attempt to also log into helm registry
+      Options: ['true', 'false']
+    required: false
+    default: 'false'
 outputs:
   registry:
     description: >-
